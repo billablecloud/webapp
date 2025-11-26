@@ -15,6 +15,29 @@ export class HomePageComponent {
   @ViewChild('project', { static: false }) projectRef!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('currency', { static: false }) currencyRef!: ElementRef<HTMLSelectElement>;
 
+  // Form Fields
+  clientName = '';
+  clientEmail = '';
+  projectName = '';
+  projectScope = '';
+  projectTasks = '';
+  projectInventory = '';
+  basePrice: number | null = null;
+  includeVat = false;
+  signature = '';
+  logoDataUrl: string | null = null;
+
+  onLogoSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.logoDataUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   private estimatePrice(text: string){
     const words = text.trim().split(/\s+/).filter(Boolean).length;
     const base = 300;
@@ -22,22 +45,16 @@ export class HomePageComponent {
     return Math.max(base, Math.round(words * perWord));
   }
 
-  private buildMilestones(price: number){
-    const first = Math.round(price * 0.4);
-    const second = Math.round(price * 0.4);
-    const last = price - first - second;
-    return [
-      { title: 'Kickoff / Approval', amount: first },
-      { title: 'Development Phase', amount: second },
-      { title: 'Delivery & Deployment', amount: last }
-    ];
-  }
-
   async generate(){
-    const text = this.projectRef?.nativeElement.value || 'No description provided.';
+    // Gather Data
     const currency = this.currencyRef?.nativeElement.value || '€';
-    const price = this.estimatePrice(text);
-    const milestones = this.buildMilestones(price);
+    const desc = this.projectRef?.nativeElement.value || '';
+    
+    // Use input price or estimate if empty
+    let finalPrice = this.basePrice;
+    if (finalPrice === null || finalPrice === undefined) {
+      finalPrice = this.estimatePrice(desc);
+    }
 
     let jsPDFModule: any = null;
     try{
@@ -55,52 +72,150 @@ export class HomePageComponent {
     }
 
     const doc = new jsPDF();
-    doc.setFontSize(22);
-    doc.setTextColor(79, 70, 229); // Primary color
-    doc.text('Billable', 14, 20);
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 20;
+    let y = 20;
+
+    // --- Header ---
+    // Logo
+    if (this.logoDataUrl) {
+      try {
+        doc.addImage(this.logoDataUrl, 'PNG', margin, y, 30, 30);
+        // If logo exists, move text to the right or below. Let's move title to right.
+      } catch (err) {
+        console.error('Error adding logo', err);
+      }
+    }
+
+    // Company / Title
+    doc.setFontSize(24);
+    doc.setTextColor(79, 70, 229); // Primary
+    doc.text('Billable', this.logoDataUrl ? 60 : margin, y + 10);
     
-    doc.setFontSize(11);
-    doc.setTextColor(100);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 28);
-
-    doc.setDrawColor(229, 231, 235);
-    doc.line(14, 32, 196, 32);
-
-    doc.setFontSize(12);
-    doc.setTextColor(0);
-    doc.text('Project Scope:', 14, 42);
     doc.setFontSize(10);
-    doc.setTextColor(60);
-    const split = doc.splitTextToSize(text, 180);
-    doc.text(split, 14, 48);
+    doc.setTextColor(100);
+    doc.text('Professional Quote', this.logoDataUrl ? 60 : margin, y + 18);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, pageWidth - margin - 40, y + 10);
+    doc.text(`Ref: EST-${Math.floor(Math.random() * 10000)}`, pageWidth - margin - 40, y + 16);
 
-    let y = 48 + (split.length * 5) + 10;
+    y += 40;
 
-    doc.setFontSize(12);
-    doc.setTextColor(0);
-    doc.text('Payment Schedule:', 14, y);
-    y += 8;
-    
-    milestones.forEach((m: any) => {
-      doc.setFontSize(10);
-      doc.setTextColor(60);
-      doc.text(`• ${m.title}`, 18, y);
-      doc.text(`${m.amount} ${currency}`, 180, y, { align: 'right' });
-      y += 7;
-    });
-
-    y += 5;
+    // --- Separator ---
     doc.setDrawColor(229, 231, 235);
-    doc.line(14, y, 196, y);
+    doc.line(margin, y, pageWidth - margin, y);
     y += 10;
 
-    doc.setFontSize(14);
+    // --- Client & Project Info ---
+    doc.setFontSize(12);
     doc.setTextColor(0);
-    doc.text('Total Estimate:', 14, y);
-    doc.setFontSize(16);
-    doc.setTextColor(79, 70, 229);
-    doc.text(`${price} ${currency}`, 180, y, { align: 'right' });
+    doc.text('Client Details:', margin, y);
+    doc.text('Project Details:', pageWidth / 2 + 10, y);
+    y += 6;
 
+    doc.setFontSize(10);
+    doc.setTextColor(60);
+    
+    // Client Col
+    doc.text(`Name: ${this.clientName || 'N/A'}`, margin, y);
+    doc.text(`Email: ${this.clientEmail || 'N/A'}`, margin, y + 6);
+    
+    // Project Col
+    doc.text(`Project: ${this.projectName || 'Untitled Project'}`, pageWidth / 2 + 10, y);
+    y += 15;
+
+    // --- Scope & Description ---
+    if (this.projectScope || desc) {
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      doc.text('Scope of Work:', margin, y);
+      y += 6;
+      
+      doc.setFontSize(10);
+      doc.setTextColor(60);
+      const scopeText = this.projectScope || desc || 'No description provided.';
+      const splitScope = doc.splitTextToSize(scopeText, pageWidth - (margin * 2));
+      doc.text(splitScope, margin, y);
+      y += (splitScope.length * 5) + 10;
+    }
+
+    // --- Tasks / Work ---
+    if (this.projectTasks) {
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      doc.text('Tasks / Work to be done:', margin, y);
+      y += 6;
+      doc.setFontSize(10);
+      doc.setTextColor(60);
+      const splitTasks = doc.splitTextToSize(this.projectTasks, pageWidth - (margin * 2));
+      doc.text(splitTasks, margin, y);
+      y += (splitTasks.length * 5) + 10;
+    }
+
+    // --- Inventory ---
+    if (this.projectInventory) {
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      doc.text('Inventory / Resources:', margin, y);
+      y += 6;
+      doc.setFontSize(10);
+      doc.setTextColor(60);
+      const splitInv = doc.splitTextToSize(this.projectInventory, pageWidth - (margin * 2));
+      doc.text(splitInv, margin, y);
+      y += (splitInv.length * 5) + 10;
+    }
+
+    // --- Financials ---
+    y += 5;
+    doc.setDrawColor(229, 231, 235); // Light gray
+    doc.setFillColor(249, 250, 251); // Very light gray
+    doc.rect(margin, y, pageWidth - (margin * 2), 40, 'F');
+    doc.rect(margin, y, pageWidth - (margin * 2), 40, 'S');
+
+    let fy = y + 10;
+    doc.setFontSize(11);
+    doc.setTextColor(0);
+    
+    // Subtotal
+    doc.text('Subtotal:', margin + 10, fy);
+    doc.text(`${finalPrice} ${currency}`, pageWidth - margin - 10, fy, { align: 'right' });
+    fy += 8;
+
+    // VAT
+    let vatAmount = 0;
+    if (this.includeVat) {
+      vatAmount = Math.round(finalPrice * 0.21);
+      doc.text('VAT (21%):', margin + 10, fy);
+      doc.text(`${vatAmount} ${currency}`, pageWidth - margin - 10, fy, { align: 'right' });
+      fy += 8;
+    }
+
+    // Total
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Total:', margin + 10, fy + 2);
+    doc.text(`${finalPrice + vatAmount} ${currency}`, pageWidth - margin - 10, fy + 2, { align: 'right' });
+    doc.setFont(undefined, 'normal');
+
+    y += 50;
+
+    // --- Footer / Signature ---
+    if (y > 250) {
+      doc.addPage();
+      y = 20;
+    }
+
+    if (this.signature) {
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      doc.text('Authorized Signature:', margin, y);
+      y += 15;
+      doc.setFont(undefined, 'italic');
+      doc.text(this.signature, margin, y);
+      doc.line(margin, y + 2, margin + 60, y + 2);
+      doc.setFont(undefined, 'normal');
+    }
+
+    // Save
     doc.save('billable-quote.pdf');
   }
 }
