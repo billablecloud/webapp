@@ -1,43 +1,93 @@
-<header class="hero">
-  <div class="container">
-    <h1>Presu.ai</h1>
-    <p class="tag">Convierte una descripción de proyecto en un presupuesto profesional (PDF) en segundos.</p>
-    <a class="cta" href="#demo">Probar demo</a>
-  </div>
-</header>
+<div class="landing-page">
+  <app-header></app-header>
 
-<main class="container">
-  <section class="section">
-    <h2>¿Qué es Presu.ai?</h2>
-    <p>Presu.ai es un SaaS que transforma el texto descriptivo de un proyecto en un presupuesto detallado en PDF: precio, hitos de pago, alcance y observaciones.</p>
-  </section>
-
-  <section id="demo" class="section demo">
-    <h2>Demo rápido</h2>
-    <p>Escribe la información del proyecto y genera un PDF de ejemplo.</p>
-
-    <label for="project">Descripción del proyecto</label>
-    <textarea #project id="project" rows="6" placeholder="Ej: Necesitamos una web corporativa con landing, 5 secciones, sistema de contacto y panel admin..."></textarea>
-
-    <div class="controls">
-      <label for="currency">Moneda:</label>
-      <select #currency id="currency"><option>€</option><option>$</option></select>
-      <button (click)="generate()">Generar PDF</button>
+  <section class="hero">
+    <div class="container hero-content">
+      <h1 class="hero-title" [innerHTML]="'hero.title' | translate"></h1>
+      <p class="hero-subtitle">{{ 'hero.subtitle' | translate }}</p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn-primary btn-lg">{{ 'hero.cta' | translate }}</a>
+        <a href="#how-it-works" class="btn-secondary btn-lg">{{ 'hero.how' | translate }}</a>
+      </div>
     </div>
-
-    <p class="note">Este demo crea un presupuesto aproximado en cliente para mostrar el flujo. En producción, el cálculo y la plantilla se generan en el backend y se guardan/revisan antes de enviar al cliente.</p>
   </section>
 
-  <section class="section how">
-    <h2>Cómo funciona</h2>
-    <ol>
-      <li>Escribe la descripción del proyecto.</li>
-      <li>El sistema calcula un precio orientativo y propone hitos.</li>
-      <li>Se genera un PDF con Precio, Hitos y Alcance.</li>
-    </ol>
+  <section id="features" class="features section">
+    <div class="container">
+      <div class="section-header">
+        <h2>{{ 'features.title' | translate }}</h2>
+        <p>{{ 'features.subtitle' | translate }}</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">✨</div>
+          <h3>{{ 'features.ai.title' | translate }}</h3>
+          <p>{{ 'features.ai.desc' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📄</div>
+          <h3>{{ 'features.pdf.title' | translate }}</h3>
+          <p>{{ 'features.pdf.desc' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">⚡</div>
+          <h3>{{ 'features.fast.title' | translate }}</h3>
+          <p>{{ 'features.fast.desc' | translate }}</p>
+        </div>
+      </div>
+    </div>
   </section>
-</main>
 
-<footer class="footer">
-  <div class="container">© 2025 Presu.ai — Prototipo. Contacto: hello@presu.ai</div>
-</footer>
+  <section id="demo" class="demo-section section">
+    <div class="container">
+      <div class="demo-card">
+        <div class="demo-header">
+          <h2>{{ 'demo.title' | translate }}</h2>
+          <p>{{ 'demo.subtitle' | translate }}</p>
+        </div>
+        
+        <div class="demo-form">
+          <div class="form-group">
+            <label for="project">{{ 'demo.label.project' | translate }}</label>
+            <textarea #project id="project" rows="5" [placeholder]="'demo.placeholder' | translate"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="currency">{{ 'demo.label.currency' | translate }}</label>
+              <select #currency id="currency">
+                <option value="€">EUR (€)</option>
+                <option value="$">USD ($)</option>
+                <option value="£">GBP (£)</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button (click)="generate()" class="btn-primary btn-block">
+                <span>{{ 'demo.btn.generate' | translate }}</span>
+                <span class="icon-right">→</span>
+              </button>
+            </div>
+          </div>
+          
+          <p class="disclaimer">
+            {{ 'demo.disclaimer' | translate }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <span class="logo">Billable</span>
+        <p>{{ 'footer.rights' | translate }}</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">{{ 'footer.privacy' | translate }}</a>
+        <a href="#">{{ 'footer.terms' | translate }}</a>
+        <a href="#">{{ 'footer.contact' | translate }}</a>
+      </div>
+    </div>
+  </footer>
+</div>

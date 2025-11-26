@@ -27,14 +27,14 @@ export class HomePageComponent {
     const second = Math.round(price * 0.4);
     const last = price - first - second;
     return [
-      { title: 'Inicio / Aprobación', amount: first },
-      { title: 'Desarrollo', amount: second },
-      { title: 'Entrega / Puesta en producción', amount: last }
+      { title: 'Kickoff / Approval', amount: first },
+      { title: 'Development Phase', amount: second },
+      { title: 'Delivery & Deployment', amount: last }
     ];
   }
 
   async generate(){
-    const text = this.projectRef?.nativeElement.value || 'Descripción no proporcionada.';
+    const text = this.projectRef?.nativeElement.value || 'No description provided.';
     const currency = this.currencyRef?.nativeElement.value || '€';
     const price = this.estimatePrice(text);
     const milestones = this.buildMilestones(price);
@@ -50,41 +50,57 @@ export class HomePageComponent {
 
     const jsPDF = jsPDFModule && (jsPDFModule.jsPDF || jsPDFModule);
     if(!jsPDF){
-      alert('jsPDF no está disponible. Instala `jspdf` o añade su script en index.html');
+      alert('jsPDF is not available. Please install `jspdf` or add the script to index.html');
       return;
     }
 
     const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text('Presupuesto - Presu.ai', 14, 20);
+    doc.setFontSize(22);
+    doc.setTextColor(79, 70, 229); // Primary color
+    doc.text('Billable', 14, 20);
+    
     doc.setFontSize(11);
-    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, 28);
+    doc.setTextColor(100);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 28);
+
+    doc.setDrawColor(229, 231, 235);
+    doc.line(14, 32, 196, 32);
 
     doc.setFontSize(12);
-    doc.text('Resumen del proyecto:', 14, 40);
+    doc.setTextColor(0);
+    doc.text('Project Scope:', 14, 42);
     doc.setFontSize(10);
+    doc.setTextColor(60);
     const split = doc.splitTextToSize(text, 180);
-    doc.text(split, 14, 46);
+    doc.text(split, 14, 48);
+
+    let y = 48 + (split.length * 5) + 10;
 
     doc.setFontSize(12);
-    doc.text('Precio total:', 14, 110);
-    doc.setFontSize(14);
-    doc.text(`${currency} ${price}`, 50, 110);
-
-    doc.setFontSize(12);
-    doc.text('Hitos de pago:', 14, 126);
-    let y = 134;
+    doc.setTextColor(0);
+    doc.text('Payment Schedule:', 14, y);
+    y += 8;
+    
     milestones.forEach((m: any) => {
       doc.setFontSize(10);
-      doc.text(`• ${m.title} — ${currency} ${m.amount}`, 18, y);
-      y += 8;
+      doc.setTextColor(60);
+      doc.text(`• ${m.title}`, 18, y);
+      doc.text(`${m.amount} ${currency}`, 180, y, { align: 'right' });
+      y += 7;
     });
 
-    doc.setFontSize(12);
-    doc.text('Alcance (resumen):', 14, y+6);
-    doc.setFontSize(10);
-    doc.text('Entregables: Diseño, Desarrollo, Pruebas, Documentación. Cambios fuera de alcance se presupuestan aparte.', 14, y+14);
+    y += 5;
+    doc.setDrawColor(229, 231, 235);
+    doc.line(14, y, 196, y);
+    y += 10;
 
-    doc.save('presupuesto_presuai.pdf');
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    doc.text('Total Estimate:', 14, y);
+    doc.setFontSize(16);
+    doc.setTextColor(79, 70, 229);
+    doc.text(`${price} ${currency}`, 180, y, { align: 'right' });
+
+    doc.save('billable-quote.pdf');
   }
 }
