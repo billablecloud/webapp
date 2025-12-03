@@ -1,0 +1,158 @@
+<div class="landing-page">
+  <app-header></app-header>
+
+  <section class="hero">
+    <div class="container hero-content">
+      <h1 class="hero-title" [innerHTML]="'hero.title' | translate"></h1>
+      <p class="hero-subtitle">{{ 'hero.subtitle' | translate }}</p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn-primary btn-lg">{{ 'hero.cta' | translate }}</a>
+        <a href="#how-it-works" class="btn-secondary btn-lg">{{ 'hero.how' | translate }}</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="features section">
+    <div class="container">
+      <div class="section-header">
+        <h2>{{ 'features.title' | translate }}</h2>
+        <p>{{ 'features.subtitle' | translate }}</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">✨</div>
+          <h3>{{ 'features.ai.title' | translate }}</h3>
+          <p>{{ 'features.ai.desc' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📄</div>
+          <h3>{{ 'features.pdf.title' | translate }}</h3>
+          <p>{{ 'features.pdf.desc' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">⚡</div>
+          <h3>{{ 'features.fast.title' | translate }}</h3>
+          <p>{{ 'features.fast.desc' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo" class="demo-section section">
+    <div class="container">
+      <div class="demo-card">
+        <div class="demo-header">
+          <h2>{{ 'demo.title' | translate }}</h2>
+          <p>{{ 'demo.subtitle' | translate }}</p>
+        </div>
+        
+        <div class="demo-form">
+          <!-- Client Section -->
+          <div class="form-section">
+            <h3 class="section-title">{{ 'form.section.client' | translate }}</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>{{ 'form.clientName' | translate }}</label>
+                <input type="text" [(ngModel)]="clientName" class="form-control" placeholder="Acme Corp">
+              </div>
+              <div class="form-group">
+                <label>{{ 'form.clientEmail' | translate }}</label>
+                <input type="email" [(ngModel)]="clientEmail" class="form-control" placeholder="contact@acme.com">
+              </div>
+            </div>
+          </div>
+
+          <!-- Project Section -->
+          <div class="form-section">
+            <h3 class="section-title">{{ 'form.section.project' | translate }}</h3>
+            <div class="form-group">
+              <label>{{ 'form.projectName' | translate }}</label>
+              <input type="text" [(ngModel)]="projectName" class="form-control" placeholder="Website Redesign">
+            </div>
+            
+            <div class="form-group">
+              <label>{{ 'demo.label.project' | translate }} / {{ 'form.scope' | translate }}</label>
+              <textarea #project [(ngModel)]="projectScope" class="form-control" [placeholder]="'demo.placeholder' | translate" rows="3"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>{{ 'form.tasks' | translate }}</label>
+                <textarea [(ngModel)]="projectTasks" class="form-control" placeholder="- Design Mockups&#10;- Frontend Dev&#10;- Testing" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label>{{ 'form.inventory' | translate }}</label>
+                <textarea [(ngModel)]="projectInventory" class="form-control" placeholder="- Domain Name&#10;- Hosting&#10;- Stock Photos" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financials Section -->
+          <div class="form-section">
+            <h3 class="section-title">{{ 'form.section.financials' | translate }}</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>{{ 'form.price' | translate }}</label>
+                <input type="number" [(ngModel)]="basePrice" class="form-control" placeholder="0.00">
+              </div>
+              <div class="form-group">
+                <label>{{ 'demo.label.currency' | translate }}</label>
+                <select #currency class="form-control">
+                  <option value="€">EUR (€)</option>
+                  <option value="$">USD ($)</option>
+                  <option value="£">GBP (£)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="includeVat">
+                <span>{{ 'form.vat' | translate }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Branding Section -->
+          <div class="form-section">
+            <h3 class="section-title">{{ 'form.section.branding' | translate }}</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>{{ 'form.companyLogo' | translate }}</label>
+                <input type="file" (change)="onLogoSelected($event)" accept="image/*" class="form-control file-input">
+              </div>
+              <div class="form-group">
+                <label>{{ 'form.signature' | translate }}</label>
+                <input type="text" [(ngModel)]="signature" class="form-control" placeholder="John Doe">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button (click)="generate()" class="btn-primary btn-block">
+              <span>{{ 'demo.btn.generate' | translate }}</span>
+              <span class="icon-right">→</span>
+            </button>
+          </div>
+          
+          <p class="disclaimer">
+            {{ 'demo.disclaimer' | translate }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <span class="logo">Billable</span>
+        <p>{{ 'footer.rights' | translate }}</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">{{ 'footer.privacy' | translate }}</a>
+        <a href="#">{{ 'footer.terms' | translate }}</a>
+        <a href="#">{{ 'footer.contact' | translate }}</a>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,24 @@
+<header class="navbar">
+  <div class="container nav-container">
+    <div class="logo">Billable</div>
+    <nav class="nav-links">
+      <a href="#features">{{ 'nav.features' | translate }}</a>
+      <a href="#pricing">{{ 'nav.pricing' | translate }}</a>
+      
+      <div class="actions">
+        <button class="icon-btn" (click)="toggleLang()" title="Switch Language">
+          <span *ngIf="(lang$ | async) === 'en'">🇺🇸 EN</span>
+          <span *ngIf="(lang$ | async) === 'es'">🇪🇸 ES</span>
+        </button>
+
+        <button class="icon-btn" (click)="toggleTheme()" title="Toggle Theme">
+          <span *ngIf="(isDark$ | async)">☀️</span>
+          <span *ngIf="!(isDark$ | async)">🌙</span>
+        </button>
+
+        <a href="#login" class="btn-text">{{ 'nav.login' | translate }}</a>
+        <a href="#demo" class="btn-primary">{{ 'nav.getStarted' | translate }}</a>
+      </div>
+    </nav>
+  </div>
+</header>
