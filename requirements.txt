@@ -1,5 +1,0 @@
-jest
-jest-preset-angular
-cypress
-ng-mocks
-@types/jest
